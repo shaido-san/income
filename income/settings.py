@@ -9,10 +9,12 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
+from dotenv import load_dotenv
+load_dotenv()
 from pathlib import Path
 from django.core.management.utils import get_random_secret_key
-SECRET_KEY = get_random_secret_key()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,14 +24,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2qf=r*94=vz&^5r1^c-ei1a5*z79ebh%h-=p^*d2ua=x!fvyh1'
+
+try:
+    from .local_settings import *
+    DEBUG = True
+    FRONTEND_URL = 'http://127.0.0.1:8000/'
+    ALLOWED_HOSTS = []
+
+except ImportError:
+    DEBUG = False
+    SECRET_KEY = get_random_secret_key()
+    ALLOWED_HOSTS = ['.pythonanywhere.com']
+
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'pythonanywhere.com', '{|shaido39|}.puthonanywhere.com']
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 
 # Application definition
